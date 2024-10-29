@@ -11,7 +11,7 @@ with open('robust_scaler.pkl', 'rb') as scaler_file:
 with open('random_forest_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
-# Función de predicción
+# FunciÃ³n de predicciÃ³n
 def predict_deposit(age, balance, duration, campaign, contact_previ_numeric, default_numeric=0, housing_numeric=0, loan_numeric=0, pdays=999):
     input_data = pd.DataFrame({
         'age': [age],
@@ -28,31 +28,31 @@ def predict_deposit(age, balance, duration, campaign, contact_previ_numeric, def
     scaled_input = scaler.transform(input_data)
     prediction = model.predict(scaled_input)
     
-    return 'Sí' if prediction[0] == 1 else 'No'
+    return 'SÃ­' if prediction[0] == 1 else 'No'
 
-# Configuración de la app Streamlit
-st.title("Predicción de Depósito a Plazo")
+# ConfiguraciÃ³n de la app Streamlit
+st.title("PredicciÃ³n de DepÃ³sito a Plazo")
 
-st.write("Ingrese la información del cliente para predecir si contratará un depósito a plazo.")
+st.write("Ingrese la informaciÃ³n del cliente para predecir si contratarÃ¡ un depÃ³sito a plazo.")
 
 # Entradas de usuario
 age = st.number_input("Edad", min_value=18, max_value=100, value=30)
 balance = st.number_input("Saldo en cuenta", min_value=0, value=1000)
-duration = st.number_input("Duración de la última campaña", min_value=0, value=300)
-campaign = st.number_input("Número de contactos realizados", min_value=1, value=1)
-contact_previ_numeric = st.number_input("Número de contactos previos", min_value=0, value=0)
-default_numeric = st.selectbox("¿Tiene crédito en incumplimiento?", ["No", "Sí"], index=0)
-housing_numeric = st.selectbox("¿Tiene préstamo de vivienda?", ["No", "Sí"], index=0)
-loan_numeric = st.selectbox("¿Tiene préstamo personal?", ["No", "Sí"], index=0)
-pdays = st.number_input("Días desde último contacto", min_value=-1, value=999)
+duration = st.number_input("DuraciÃ³n de la Ãºltima campaÃ±a", min_value=0, value=300)
+campaign = st.number_input("NÃºmero de contactos realizados", min_value=1, value=1)
+contact_previ_numeric = st.number_input("NÃºmero de contactos previos", min_value=0, value=0)
+default_numeric = st.selectbox("Â¿Tiene crÃ©dito en incumplimiento?", ["No", "SÃ­"], index=0)
+housing_numeric = st.selectbox("Â¿Tiene prÃ©stamo de vivienda?", ["No", "SÃ­"], index=0)
+loan_numeric = st.selectbox("Â¿Tiene prÃ©stamo personal?", ["No", "SÃ­"], index=0)
+pdays = st.number_input("DÃ­as desde Ãºltimo contacto", min_value=-1, value=999)
 
-# Convertir selecciones a valores numéricos
-default_numeric = 1 if default_numeric == "Sí" else 0
-housing_numeric = 1 if housing_numeric == "Sí" else 0
-loan_numeric = 1 if loan_numeric == "Sí" else 0
+# Convertir selecciones a valores numÃ©ricos
+default_numeric = 1 if default_numeric == "SÃ­" else 0
+housing_numeric = 1 if housing_numeric == "SÃ­" else 0
+loan_numeric = 1 if loan_numeric == "SÃ­" else 0
 
-# Predicción
+# PredicciÃ³n
 if st.button("Predecir"):
     resultado = predict_deposit(age, balance, duration, campaign, contact_previ_numeric, default_numeric, housing_numeric, loan_numeric, pdays)
-    st.write(f"¿El cliente contratará un depósito a plazo? {resultado}")
+    st.write(f"Â¿El cliente contratarÃ¡ un depÃ³sito a plazo? {resultado}")
 
