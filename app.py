@@ -1,53 +1,58 @@
 
-import pickle
-import pandas as pd
+
 import streamlit as st
+import pandas as pd
+import pickle
 
-# Cargar el modelo de Random Forest
-with open('random_forest_model.pkl', 'rb') as model_file:
-    model = pickle.load(model_file)
-
-# Cargar el escalador
+# Cargar el modelo y el escalador
 with open('robust_scaler.pkl', 'rb') as scaler_file:
     scaler = pickle.load(scaler_file)
 
-# TÃ­tulo de la aplicaciÃ³n
-st.title("PredicciÃ³n de DepÃ³sitos en el Banco")
+with open('random_forest_model.pkl', 'rb') as model_file:
+    model = pickle.load(model_file)
 
-# Entradas del usuario
-age = st.number_input("Edad", min_value=18, max_value=100, value=30)
-balance = st.number_input("Saldo", min_value=-100000, max_value=1000000, value=0)
-duration = st.number_input("DuraciÃ³n de la llamada", min_value=0, max_value=1000, value=10)
-campaign = st.number_input("NÃºmero de contactos realizados", min_value=0, max_value=100, value=1)
-pdays = st.number_input("NÃºmero de dÃ­as desde la Ãºltima llamada", min_value=-1, max_value=1000, value=-1)
-default_numeric = st.selectbox("Â¿Tiene crÃ©dito por defecto?", options=[0, 1])
-housing_numeric = st.selectbox("Â¿Tiene prÃ©stamo hipotecario?", options=[0, 1])
-loan_numeric = st.selectbox("Â¿Tiene prÃ©stamo personal?", options=[0, 1])
-contact_previ_numeric = st.number_input("NÃºmero de contactos previos", min_value=0, max_value=100, value=0)
-
-# Al hacer clic en el botÃ³n de predicciÃ³n
-if st.button("Predecir"):
-    # Crear un DataFrame con las entradas del usuario
+# Función de predicción
+def predict_deposit(age, balance, duration, campaign, contact_previ_numeric, default_numeric=0, housing_numeric=0, loan_numeric=0, pdays=999):
     input_data = pd.DataFrame({
         'age': [age],
         'balance': [balance],
         'duration': [duration],
         'campaign': [campaign],
-        'pdays': [pdays],
+        'contact_previ_numeric': [contact_previ_numeric],
         'default_numeric': [default_numeric],
         'housing_numeric': [housing_numeric],
         'loan_numeric': [loan_numeric],
-        'contact_previ_numeric': [contact_previ_numeric],
+        'pdays': [pdays]
     })
+    
+    scaled_input = scaler.transform(input_data)
+    prediction = model.predict(scaled_input)
+    
+    return 'Sí' if prediction[0] == 1 else 'No'
 
-    # Escalar las entradas
-    input_scaled = scaler.transform(input_data)
+# Configuración de la app Streamlit
+st.title("Predicción de Depósito a Plazo")
 
-    # Hacer la predicciÃ³n
-    prediction = model.predict(input_scaled)
+st.write("Ingrese la información del cliente para predecir si contratará un depósito a plazo.")
 
-    # Mostrar el resultado
-    if prediction[0] == 1:
-        st.success("El cliente probablemente harÃ¡ un depÃ³sito.")
-    else:
-        st.warning("El cliente probablemente no harÃ¡ un depÃ³sito.")
+# Entradas de usuario
+age = st.number_input("Edad", min_value=18, max_value=100, value=30)
+balance = st.number_input("Saldo en cuenta", min_value=0, value=1000)
+duration = st.number_input("Duración de la última campaña", min_value=0, value=300)
+campaign = st.number_input("Número de contactos realizados", min_value=1, value=1)
+contact_previ_numeric = st.number_input("Número de contactos previos", min_value=0, value=0)
+default_numeric = st.selectbox("¿Tiene crédito en incumplimiento?", ["No", "Sí"], index=0)
+housing_numeric = st.selectbox("¿Tiene préstamo de vivienda?", ["No", "Sí"], index=0)
+loan_numeric = st.selectbox("¿Tiene préstamo personal?", ["No", "Sí"], index=0)
+pdays = st.number_input("Días desde último contacto", min_value=-1, value=999)
+
+# Convertir selecciones a valores numéricos
+default_numeric = 1 if default_numeric == "Sí" else 0
+housing_numeric = 1 if housing_numeric == "Sí" else 0
+loan_numeric = 1 if loan_numeric == "Sí" else 0
+
+# Predicción
+if st.button("Predecir"):
+    resultado = predict_deposit(age, balance, duration, campaign, contact_previ_numeric, default_numeric, housing_numeric, loan_numeric, pdays)
+    st.write(f"¿El cliente contratará un depósito a plazo? {resultado}")
+
