@@ -108,8 +108,6 @@ input_data = pd.DataFrame({
     'education_unknown': [education_unknown]
 })
 
-input_data = input_data[scaler.feature_names_in_]
-
 input_scaled = scaler.transform(input_data)
 
 
