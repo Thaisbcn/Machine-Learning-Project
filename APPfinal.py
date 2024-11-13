@@ -26,6 +26,9 @@ with open('robust_scaler.pkl', 'rb') as scaler_file:
 
 # Función para predecir y mostrar resultados
 def predict_and_display(input_data):
+    # Asegúrate de eliminar la columna que ya no necesitas
+    input_data = input_data.drop(columns=['contact_previ_numeric'], errors='ignore')  # Elimina contact_prev si ya no lo usas
+
     # Escalar las características de entrada usando el escalador cargado
     input_scaled = scaler.transform(input_data)
 
@@ -44,10 +47,6 @@ st.sidebar.header("Configuración de Entrada")
 
 # Cargar datos procesados (puedes cambiar esta ruta si lo deseas)
 banc_transformed = pd.read_csv('banc_transformed.csv')
-
-# Mostrar las primeras filas del DataFrame para entender las variables (opcional)
-st.write("Primeras filas del dataset:")
-st.write(banc_transformed.head())
 
 # Ingresar los datos de todas las columnas
 st.sidebar.header("Ingrese los datos del cliente")
@@ -84,7 +83,7 @@ education_secondary = 1 if education == 'Secundario' else 0
 education_tertiary = 1 if education == 'Terciario' else 0 
 education_unknown = 1 if education == 'Desconocido' else 0 
 
-# Crear el DataFrame de entrada per a la predicció
+# Crear el DataFrame de entrada para la predicción
 input_data = pd.DataFrame({
     'age': [edad],
     'balance': [saldo],
@@ -102,12 +101,7 @@ input_data = pd.DataFrame({
     'education_unknown': [education_unknown]
 })
 
-# Asegúrate de que las columnas del input_data estén en el mismo orden que el modelo
-st.write(f"Características esperadas por el modelo: {scaler.feature_names_in_}")
-input_data = input_data[scaler.feature_names_in_]
-
 # Botón para realizar la predicción
 if st.sidebar.button('Predecir'):
     predict_and_display(input_data)
-
 
