@@ -58,7 +58,6 @@ pdays = st.sidebar.slider('Días desde el último contacto', min_value=-1, max_v
 default = st.sidebar.selectbox('¿Tiene morosidad?', ['No', 'Sí'])
 housing = st.sidebar.selectbox('¿Tiene hipoteca?', ['No', 'Sí'])
 loan = st.sidebar.selectbox('¿Tiene crédito personal?', ['No', 'Sí'])
-contact_prev = st.sidebar.selectbox('¿Fue contactado anteriormente?', ['No', 'Sí'])
 
 # Estado civil (se puede usar multiple selectbox para las tres opciones)
 marital = st.sidebar.selectbox('Estado Civil', ['Divorciado', 'Casado', 'Soltero'])
@@ -70,7 +69,6 @@ education = st.sidebar.selectbox('Nivel Educativo', ['Primario', 'Secundario', '
 default_numeric = 1 if default == 'Sí' else 0
 housing_numeric = 1 if housing == 'Sí' else 0
 loan_numeric = 1 if loan == 'Sí' else 0
-contact_prev_numeric = 1 if contact_prev == 'Sí' else 0
 
 # Convertir las categorías de estado civil y nivel educativo en variables binarias
 marital_divorced = 1 if marital == 'Divorciado' else 0
@@ -91,7 +89,6 @@ input_data = pd.DataFrame({
     'default_numeric': [default_numeric],
     'housing_numeric': [housing_numeric],
     'loan_numeric': [loan_numeric],
-    'contact_previ_numeric': [contact_prev_numeric],
     'marital_divorced': [marital_divorced],
     'marital_married': [marital_married],
     'marital_single': [marital_single],
