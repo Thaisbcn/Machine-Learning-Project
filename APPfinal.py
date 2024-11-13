@@ -45,10 +45,6 @@ st.sidebar.header("Configuración de Entrada")
 # Cargar datos procesados (puedes cambiar esta ruta si lo deseas)
 banc_transformed = pd.read_csv('banc_transformed.csv')
 
-# Mostrar las primeras filas del DataFrame para entender las variables
-st.write("Primeras filas del dataset:")
-st.write(banc_transformed.head())
-
 # Ingresar los datos de todas las columnas
 st.sidebar.header("Ingrese los datos del cliente")
 
@@ -106,7 +102,9 @@ input_data = pd.DataFrame({
 })
 
 input_scaled = scaler.transform(input_data)
-
+# Botón para realizar la predicción
+if st.sidebar.button('Predecir'):
+    predict_and_display(input_data)
 
 # In[8]:
 
