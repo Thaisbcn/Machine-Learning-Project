@@ -4,9 +4,6 @@
 # In[1]:
 
 
-cd C:/Users/thais/Documents/00_MACHINE_LEARNING/
-
-
 # In[3]:
 
 
