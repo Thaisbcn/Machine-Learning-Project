@@ -17,6 +17,7 @@ from sklearn.preprocessing import RobustScaler
 # In[7]:
 
 
+
 # Cargar el modelo y el escalador guardados
 with open('random_forest_model.pkl', 'rb') as model_file:
     rf_model = pickle.load(model_file)
@@ -26,9 +27,6 @@ with open('robust_scaler.pkl', 'rb') as scaler_file:
 
 # Función para predecir y mostrar resultados
 def predict_and_display(input_data):
-    # Asegúrate de eliminar la columna que ya no necesitas
-    input_data = input_data.drop(columns=['contact_previ_numeric'], errors='ignore')  # Elimina contact_prev si ya no lo usas
-
     # Escalar las características de entrada usando el escalador cargado
     input_scaled = scaler.transform(input_data)
 
@@ -61,6 +59,7 @@ pdays = st.sidebar.slider('Días desde el último contacto', min_value=-1, max_v
 default = st.sidebar.selectbox('¿Tiene morosidad?', ['No', 'Sí'])
 housing = st.sidebar.selectbox('¿Tiene hipoteca?', ['No', 'Sí'])
 loan = st.sidebar.selectbox('¿Tiene crédito personal?', ['No', 'Sí'])
+contact_prev = st.sidebar.selectbox('¿Fue contactado anteriormente?', ['No', 'Sí'])
 
 # Estado civil (se puede usar multiple selectbox para las tres opciones)
 marital = st.sidebar.selectbox('Estado Civil', ['Divorciado', 'Casado', 'Soltero'])
@@ -72,6 +71,7 @@ education = st.sidebar.selectbox('Nivel Educativo', ['Primario', 'Secundario', '
 default_numeric = 1 if default == 'Sí' else 0
 housing_numeric = 1 if housing == 'Sí' else 0
 loan_numeric = 1 if loan == 'Sí' else 0
+contact_prev_numeric = 1 if contact_prev == 'Sí' else 0
 
 # Convertir las categorías de estado civil y nivel educativo en variables binarias
 marital_divorced = 1 if marital == 'Divorciado' else 0
@@ -83,7 +83,7 @@ education_secondary = 1 if education == 'Secundario' else 0
 education_tertiary = 1 if education == 'Terciario' else 0 
 education_unknown = 1 if education == 'Desconocido' else 0 
 
-# Crear el DataFrame de entrada para la predicción
+# Crear el DataFrame de entrada per a la predicció
 input_data = pd.DataFrame({
     'age': [edad],
     'balance': [saldo],
@@ -92,6 +92,7 @@ input_data = pd.DataFrame({
     'default_numeric': [default_numeric],
     'housing_numeric': [housing_numeric],
     'loan_numeric': [loan_numeric],
+    'contact_previ_numeric': [contact_prev_numeric],
     'marital_divorced': [marital_divorced],
     'marital_married': [marital_married],
     'marital_single': [marital_single],
@@ -100,6 +101,9 @@ input_data = pd.DataFrame({
     'education_tertiary': [education_tertiary],
     'education_unknown': [education_unknown]
 })
+
+# Asegurarse de que las columnas del input_data estén en el mismo orden que el modelo
+input_data = input_data[scaler.feature_names_in_]
 
 # Botón para realizar la predicción
 if st.sidebar.button('Predecir'):
