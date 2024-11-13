@@ -103,6 +103,7 @@ input_data = pd.DataFrame({
 })
 
 # Asegúrate de que las columnas del input_data estén en el mismo orden que el modelo
+st.write(f"Características esperadas por el modelo: {scaler.feature_names_in_}")
 input_data = input_data[scaler.feature_names_in_]
 
 # Botón para realizar la predicción
