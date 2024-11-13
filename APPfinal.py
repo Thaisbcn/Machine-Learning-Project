@@ -111,5 +111,3 @@ input_scaled = scaler.transform(input_data)
 # In[8]:
 
 
-jupyter nbconvert --to script APPfinal.ipynb
-
